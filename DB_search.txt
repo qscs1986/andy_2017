@@ -1,0 +1,79 @@
+ SELECT DISTINCT colist.DED_ELEMENT_EP_DB_ID, colist.ID,
+            colist.column_name,
+            colist.field_type,
+            colist.field_width, COLIST.element_name_c
+       FROM (SELECT db.DED_ELEMENT_EP_DB_ID,
+                    VE.ID,
+                    db.table_id table_id,
+                    db.column_id column_id,
+                    db.db_name,
+                    db.schema_name,
+                    db.table_name,
+                    db.column_name,
+                    ve.col_name suggest_column_name,
+                    ve.name_e element_name_e,
+                    ve.name_c element_name_c,
+                    ve.field_type,
+                    ve.field_width
+               FROM    (SELECT f.table_id table_id,
+                               f.column_id column_id,
+                               t.db_name,
+                               t.schema_name,
+                               t.table_name,
+                               f.column_name,
+                               F.DED_ELEMENT_EP_DB_ID
+                          FROM STRU_DB_TABLE t, STRU_DB_field f
+                         WHERE t.id = f.table_id) db
+                    LEFT OUTER JOIN
+                       V_ELEMENT_db ve
+                    ON db.ded_element_ep_db_id = ve.id2) colist,
+            (SELECT a.table_id,
+                    a.column_id,
+                    a.msgtype,
+                    a.version,
+                    a.record_id,
+                    a.ele_order,
+                    b.name_c,
+                    b.name_e,
+                    b.field_type,
+                    b.field_width
+               FROM (SELECT * FROM DB_MSGTYPE_RELATION
+                     UNION ALL
+                     SELECT * FROM DB_MSGTYPE_RELATION_CNC) A,
+                    (SELECT MSGTYPE,
+                            RECORD_ID,
+                            ELE_ORDER,
+                            NAME_C,
+                            NAME_E,
+                            FIELD_TYPE,
+                            FIELD_WIDTH
+                       FROM V_STRU_FLAT_FIELD T1
+                     UNION ALL
+                     SELECT MSGTYPE,
+                            REC_ORDER RECORD_ID,
+                            ELE_ORDER,
+                            NAME_C,
+                            NAME_E,
+                            FIELD_TYPE,
+                            FIELD_WIDTH
+                       FROM V_STRU_CNC_FIELD T1) b
+              WHERE     a.msgtype = b.msgtype(+)
+                    AND A.RECORD_ID = B.RECORD_ID(+)
+                    AND A.ELE_ORDER = B.ELE_ORDER(+)) r
+      WHERE colist.table_id = R.TABLE_ID(+)
+            AND colist.COLUMN_ID = r.column_id(+)
+            AND (colist.id = ''  or colist.element_name_c like '%œ‰∫≈%'  );
+            
+            
+            
+            SELECT * FROM GUARD.V_STRU_DB_FIELD T WHERE T.TABLE_NAME = 'CNCMFT_MT5101_CTN';
+            
+            
+            
+            
+      
+
+            
+            
+            
+            
